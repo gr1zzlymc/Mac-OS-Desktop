@@ -740,12 +740,35 @@ fileConverterApp.format.addEventListener("change", () => {
 });
 
 // ----------------- Instagram downloader functionality -----------------
+function extractInstagramShortcode(url) {
+  const match = url.match(/\/(?:p|reel|tv)\/([A-Za-z0-9_-]+)/);
+  return match ? match[1] : null;
+}
+
 async function fetchInstagramImages(url) {
   try {
-    const res = await fetch(`https://r.jina.ai/${url}`);
-    const text = await res.text();
-    const matches = [...text.matchAll(/"display_url":"(.*?)"/g)];
-    return matches.map((m) => m[1].replace(/\\u0026/g, "&"));
+    const short = extractInstagramShortcode(url);
+    if (!short) return [];
+    const api = `https://r.jina.ai/https://www.instagram.com/p/${short}/?__a=1&__d=dis`;
+    const res = await fetch(api);
+    const data = await res.json();
+    let images = [];
+    if (data.graphql && data.graphql.shortcode_media) {
+      const media = data.graphql.shortcode_media;
+      if (media.edge_sidecar_to_children) {
+        images = media.edge_sidecar_to_children.edges.map((e) => e.node.display_url);
+      } else if (media.display_url) {
+        images = [media.display_url];
+      }
+    } else if (data.items && data.items[0]) {
+      const item = data.items[0];
+      if (item.carousel_media) {
+        images = item.carousel_media.map((c) => c.image_versions2.candidates[0].url);
+      } else if (item.image_versions2) {
+        images = [item.image_versions2.candidates[0].url];
+      }
+    }
+    return images;
   } catch (e) {
     console.error(e);
     return [];
