@@ -83,6 +83,22 @@ const mapsApp = {
   opening: document.querySelector(".open-map"),
 };
 
+// File Converter App
+const fileConverterApp = {
+  app_name: document.querySelector("#fileConverter"),
+  window: document.querySelector(".file-converter"),
+  full: document.querySelector(".full-file-converter"),
+  close: document.querySelector(".close-file-converter"),
+  backfull: document.querySelector(".backfull-file-converter"),
+  point: document.querySelector("#point-file-converter"),
+  opening: document.querySelector(".open-file-converter"),
+  opening_l: document.querySelector(".open-fileconverter-launching"),
+  input: document.querySelector(".file-converter .file-input"),
+  format: document.querySelector(".file-converter .format-select"),
+  convertBtn: document.querySelector(".file-converter .convert-btn"),
+  downloadLink: document.querySelector(".file-converter .download-link"),
+};
+
 // Launchpad
 const launchpad = {
   container: document.querySelector(".container__Window"),
@@ -190,6 +206,16 @@ function handleLaunchpadSearch(e) {
 }
 // Launchpad function end
 
+function handleOpenFileConverter_launchpad() {
+  fileConverterApp.window.style.display = "block";
+  fileConverterApp.app_name.style.display = "block";
+  launchpad.container.style.display = "flex";
+  elements.navbar.style.display = "flex";
+  launchpad.window.style.display = "none";
+  fileConverterApp.point.style.display = "block";
+  launchpad.point.style.display = "none";
+}
+
 // Calculator app start
 function handleOpenCal_launchpad() {
   calculatorApp.window.style.display = "block";
@@ -220,6 +246,9 @@ notesApp.close.addEventListener("click", () =>
 mapsApp.close.addEventListener("click", () =>
   close_window(mapsApp.window, mapsApp.point, mapsApp.app_name)
 );
+fileConverterApp.close.addEventListener("click", () =>
+  close_window(fileConverterApp.window, fileConverterApp.point, fileConverterApp.app_name)
+);
 notesApp.deleting.addEventListener("click", handleDeleting);
 terminalApp.full.addEventListener("click", () =>
   handleFullScreen(terminalApp.window)
@@ -233,6 +262,9 @@ vscodeApp.full.addEventListener("click", () =>
 );
 */
 mapsApp.full.addEventListener("click", () => handleFullScreen(mapsApp.window));
+fileConverterApp.full.addEventListener("click", () =>
+  handleFullScreen(fileConverterApp.window)
+);
 notesApp.window.addEventListener("click", handleNotes);
 terminalApp.opening.addEventListener("click", () =>
   open_window(terminalApp.window, terminalApp.point, terminalApp.app_name)
@@ -243,6 +275,9 @@ notesApp.opening.addEventListener("click", () =>
 calculatorApp.opening.addEventListener("click", () =>
   open_window(calculatorApp.window, calculatorApp.point, calculatorApp.app_name)
 );
+fileConverterApp.opening.addEventListener("click", () =>
+  open_window(fileConverterApp.window, fileConverterApp.point, fileConverterApp.app_name)
+);
 /*
 vscodeApp.opening.addEventListener("click", () =>
   open_window(vscodeApp.window, vscodeApp.point, vscodeApp.app_name)
@@ -250,6 +285,10 @@ vscodeApp.opening.addEventListener("click", () =>
 */
 mapsApp.opening.addEventListener("click", () =>
   open_window(mapsApp.window, mapsApp.point, mapsApp.app_name)
+);
+fileConverterApp.opening_l.addEventListener(
+  "click",
+  handleOpenFileConverter_launchpad
 );
 /*
 vscodeApp.close.addEventListener("click", () =>
@@ -261,6 +300,9 @@ vscodeApp.backfull.addEventListener("click", () =>
 */
 mapsApp.backfull.addEventListener("click", () =>
   handleMinimize(mapsApp.window)
+);
+fileConverterApp.backfull.addEventListener("click", () =>
+  handleMinimize(fileConverterApp.window)
 );
 calculatorApp.close.addEventListener("click", () =>
   close_window(
@@ -346,6 +388,41 @@ $(function () {
   $(".Vscode").draggable();
   $(".spotlight_search").draggable();
   $(".maps").draggable();
+  $(".file-converter").draggable();
+});
+
+// File converter functionality
+fileConverterApp.convertBtn.addEventListener("click", () => {
+  const file = fileConverterApp.input.files[0];
+  if (!file) return;
+  const format = fileConverterApp.format.value;
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const img = new Image();
+    img.onload = function () {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+      const mime = format === "jpeg" ? "image/jpeg" : "image/png";
+      canvas.toBlob(function (blob) {
+        const url = URL.createObjectURL(blob);
+        fileConverterApp.downloadLink.href = url;
+        fileConverterApp.downloadLink.download =
+          file.name.replace(/\.[^.]+$/, "") + "." + format;
+        fileConverterApp.downloadLink.textContent =
+          "Download " + format.toUpperCase();
+        fileConverterApp.downloadLink.style.display = "inline-block";
+      }, mime);
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+fileConverterApp.input.addEventListener("change", () => {
+  fileConverterApp.downloadLink.style.display = "none";
 });
 
 // Date and time

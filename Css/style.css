@@ -1329,3 +1329,36 @@ li > .menu__container > .grid__controling .control_center--grid {
 .widgets-panel__calendar li span:first-child {
   font-weight: bold;
 }
+
+.file-converter {
+  display: none;
+  width: 22rem;
+  max-width: 90%;
+  height: 18rem;
+  background: var(--color-black-500);
+  backdrop-filter: blur(1rem);
+  border-radius: 1rem;
+  box-shadow: 0 0.5rem 2rem var(--color-black-500);
+  border: 1px solid var(--color-white-200);
+  padding: 1rem;
+}
+
+.file-converter__content {
+  height: calc(100% - 2rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.file-converter__content input,
+.file-converter__content select,
+.file-converter__content button {
+  width: 100%;
+}
+
+.file-converter__content a {
+  margin-top: 0.5rem;
+  color: #4aa3ff;
+}
