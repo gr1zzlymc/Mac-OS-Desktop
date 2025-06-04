@@ -1362,3 +1362,21 @@ li > .menu__container > .grid__controling .control_center--grid {
   margin-top: 0.5rem;
   color: #4aa3ff;
 }
+
+/* Add to Home Screen button */
+.install-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 0.5rem 1rem;
+  background: var(--color-blue-800);
+  color: white;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  z-index: 10000;
+}
+
+.install-btn.install-hidden {
+  display: none;
+}

@@ -10,3 +10,24 @@ if ("serviceWorker" in navigator) {
       console.log("Registration failed with " + error);
     });
 }
+
+let deferredPrompt;
+const installBtn = document.getElementById("installBtn");
+
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (installBtn) {
+    installBtn.classList.remove("install-hidden");
+  }
+});
+
+installBtn?.addEventListener("click", () => {
+  installBtn.classList.add("install-hidden");
+  deferredPrompt?.prompt();
+});
+
+window.addEventListener("appinstalled", () => {
+  deferredPrompt = null;
+  installBtn?.classList.add("install-hidden");
+});

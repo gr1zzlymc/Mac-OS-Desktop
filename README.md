@@ -23,7 +23,9 @@ https://mhmdmhd6.github.io/Mac-OS-Desktop
   <img width="300" src="https://user-images.githubusercontent.com/79286306/170665240-c8feef83-d6b0-41de-9368-ac15c7f4f0af.jpg">
 </p>
 
-                                      
+## Install on your phone
+
+Visit the website using a modern browser. When prompted, tap **Install App** or use your browser's *Add to Home Screen* option to create a shortcut.
 
 <hr> <br>
 
