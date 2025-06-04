@@ -94,9 +94,12 @@ const fileConverterApp = {
   opening: document.querySelector(".open-file-converter"),
   opening_l: document.querySelector(".open-fileconverter-launching"),
   input: document.querySelector(".file-converter .file-input"),
+  widthInput: document.querySelector(".file-converter .width-input"),
+  heightInput: document.querySelector(".file-converter .height-input"),
   format: document.querySelector(".file-converter .format-select"),
   convertBtn: document.querySelector(".file-converter .convert-btn"),
   downloadLink: document.querySelector(".file-converter .download-link"),
+  status: document.querySelector(".file-converter .status-message"),
 };
 
 // Launchpad
@@ -395,17 +398,25 @@ $(function () {
 fileConverterApp.convertBtn.addEventListener("click", () => {
   const file = fileConverterApp.input.files[0];
   if (!file) return;
+  fileConverterApp.status.textContent = "Converting...";
   const format = fileConverterApp.format.value;
   const reader = new FileReader();
   reader.onload = function (e) {
     const img = new Image();
     img.onload = function () {
       const canvas = document.createElement("canvas");
-      canvas.width = img.width;
-      canvas.height = img.height;
+      const w = parseInt(fileConverterApp.widthInput.value);
+      const h = parseInt(fileConverterApp.heightInput.value);
+      canvas.width = w || img.width;
+      canvas.height = h || img.height;
       const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0);
-      const mime = format === "jpeg" ? "image/jpeg" : "image/png";
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const mime =
+        format === "jpeg"
+          ? "image/jpeg"
+          : format === "webp"
+          ? "image/webp"
+          : "image/png";
       canvas.toBlob(function (blob) {
         const url = URL.createObjectURL(blob);
         fileConverterApp.downloadLink.href = url;
@@ -414,6 +425,7 @@ fileConverterApp.convertBtn.addEventListener("click", () => {
         fileConverterApp.downloadLink.textContent =
           "Download " + format.toUpperCase();
         fileConverterApp.downloadLink.style.display = "inline-block";
+        fileConverterApp.status.textContent = "Conversion complete!";
       }, mime);
     };
     img.src = e.target.result;
@@ -423,6 +435,19 @@ fileConverterApp.convertBtn.addEventListener("click", () => {
 
 fileConverterApp.input.addEventListener("change", () => {
   fileConverterApp.downloadLink.style.display = "none";
+  fileConverterApp.status.textContent = "";
+});
+fileConverterApp.widthInput.addEventListener("input", () => {
+  fileConverterApp.downloadLink.style.display = "none";
+  fileConverterApp.status.textContent = "";
+});
+fileConverterApp.heightInput.addEventListener("input", () => {
+  fileConverterApp.downloadLink.style.display = "none";
+  fileConverterApp.status.textContent = "";
+});
+fileConverterApp.format.addEventListener("change", () => {
+  fileConverterApp.downloadLink.style.display = "none";
+  fileConverterApp.status.textContent = "";
 });
 
 // Date and time
