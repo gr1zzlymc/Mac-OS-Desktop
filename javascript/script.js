@@ -137,6 +137,14 @@ const APP_MAP = {
   "file-converter": { app: "fileConverter", point: "point-file-converter" },
 };
 
+function blobToDataURL(blob) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.readAsDataURL(blob);
+  });
+}
+
 let conversionLibrary = [];
 
 function loadConversionLibrary() {
@@ -155,15 +163,15 @@ function saveConversionLibrary() {
 function addItemToLibraryElement(item) {
   const li = document.createElement("li");
   const a = document.createElement("a");
-  a.href = item.url;
+  a.href = item.data || item.url;
   a.download = item.name;
   a.textContent = item.name;
   li.appendChild(a);
   fileConverterApp.library.appendChild(li);
 }
 
-function addToLibrary(url, name) {
-  const item = { url, name };
+function addToLibrary(data, name) {
+  const item = { data, name };
   conversionLibrary.push(item);
   saveConversionLibrary();
   if (fileConverterApp.library) addItemToLibraryElement(item);
@@ -534,7 +542,7 @@ function handleFileConversion() {
 
   if (fileType.startsWith("image/")) {
     const reader = new FileReader();
-    reader.onload = function (e) {
+    reader.onload = async function (e) {
       const img = new Image();
       img.onload = function () {
         const canvas = document.createElement("canvas");
@@ -550,17 +558,17 @@ function handleFileConversion() {
             : format === "webp"
             ? "image/webp"
             : "image/png";
-        canvas.toBlob(function (blob) {
-          const url = URL.createObjectURL(blob);
-          fileConverterApp.downloadLink.href = url;
+        canvas.toBlob(async function (blob) {
+          const dataUrl = await blobToDataURL(blob);
+          fileConverterApp.downloadLink.href = dataUrl;
           fileConverterApp.downloadLink.download =
             file.name.replace(/\.[^.]+$/, "") + "." + format;
           fileConverterApp.downloadLink.textContent =
             "Download " + format.toUpperCase();
           fileConverterApp.downloadLink.style.display = "inline-block";
           fileConverterApp.status.textContent = "Conversion complete!";
-          showPreview(url, mime);
-          addToLibrary(url, fileConverterApp.downloadLink.download);
+          showPreview(dataUrl, mime);
+          addToLibrary(dataUrl, fileConverterApp.downloadLink.download);
         }, mime);
       };
       img.src = e.target.result;
@@ -568,7 +576,7 @@ function handleFileConversion() {
     reader.readAsDataURL(file);
   } else if (fileType === "text/plain") {
     const reader = new FileReader();
-    reader.onload = function (e) {
+    reader.onload = async function (e) {
       const text = e.target.result;
       if (format === "pdf") {
         const { jsPDF } = window.jspdf;
@@ -576,26 +584,26 @@ function handleFileConversion() {
         const lines = doc.splitTextToSize(text, 180);
         doc.text(lines, 10, 10);
         const blob = doc.output("blob");
-        const url = URL.createObjectURL(blob);
-        fileConverterApp.downloadLink.href = url;
+        const dataUrl = await blobToDataURL(blob);
+        fileConverterApp.downloadLink.href = dataUrl;
         fileConverterApp.downloadLink.download =
           file.name.replace(/\.[^.]+$/, "") + ".pdf";
         fileConverterApp.downloadLink.textContent = "Download PDF";
         fileConverterApp.downloadLink.style.display = "inline-block";
         fileConverterApp.status.textContent = "Conversion complete!";
-        showPreview(url, "application/pdf");
-        addToLibrary(url, fileConverterApp.downloadLink.download);
+        showPreview(dataUrl, "application/pdf");
+        addToLibrary(dataUrl, fileConverterApp.downloadLink.download);
       } else if (format === "txt") {
         const blob = new Blob([text], { type: "text/plain" });
-        const url = URL.createObjectURL(blob);
-        fileConverterApp.downloadLink.href = url;
+        const dataUrl = await blobToDataURL(blob);
+        fileConverterApp.downloadLink.href = dataUrl;
         fileConverterApp.downloadLink.download =
           file.name.replace(/\.[^.]+$/, "") + ".txt";
         fileConverterApp.downloadLink.textContent = "Download TXT";
         fileConverterApp.downloadLink.style.display = "inline-block";
         fileConverterApp.status.textContent = "Conversion complete!";
-        showPreview(url, "text/plain");
-        addToLibrary(url, fileConverterApp.downloadLink.download);
+        showPreview(dataUrl, "text/plain");
+        addToLibrary(dataUrl, fileConverterApp.downloadLink.download);
       } else {
         fileConverterApp.status.textContent = "Unsupported conversion";
       }
@@ -621,18 +629,18 @@ function handleFileConversion() {
                 )
               );
             }
-            Promise.all(tasks).then(() => {
+            Promise.all(tasks).then(async () => {
               const text = pages.join("\n\n");
               const blob = new Blob([text], { type: "text/plain" });
-              const url = URL.createObjectURL(blob);
-              fileConverterApp.downloadLink.href = url;
+              const dataUrl = await blobToDataURL(blob);
+              fileConverterApp.downloadLink.href = dataUrl;
               fileConverterApp.downloadLink.download =
                 file.name.replace(/\.[^.]+$/, "") + ".txt";
               fileConverterApp.downloadLink.textContent = "Download TXT";
               fileConverterApp.downloadLink.style.display = "inline-block";
               fileConverterApp.status.textContent = "Conversion complete!";
-              showPreview(url, "text/plain");
-              addToLibrary(url, fileConverterApp.downloadLink.download);
+              showPreview(dataUrl, "text/plain");
+              addToLibrary(dataUrl, fileConverterApp.downloadLink.download);
             });
           })
           .catch(() => {
@@ -655,6 +663,7 @@ if (fileConverterApp.convertBtn) {
 fileConverterApp.input.addEventListener("change", () => {
   fileConverterApp.downloadLink.style.display = "none";
   fileConverterApp.status.textContent = "";
+  if (fileConverterApp.preview) fileConverterApp.preview.innerHTML = "";
   const file = fileConverterApp.input.files[0];
   if (!file) return;
   if (file.type.startsWith("image/")) {
@@ -676,14 +685,17 @@ fileConverterApp.input.addEventListener("change", () => {
 fileConverterApp.widthInput.addEventListener("input", () => {
   fileConverterApp.downloadLink.style.display = "none";
   fileConverterApp.status.textContent = "";
+  if (fileConverterApp.preview) fileConverterApp.preview.innerHTML = "";
 });
 fileConverterApp.heightInput.addEventListener("input", () => {
   fileConverterApp.downloadLink.style.display = "none";
   fileConverterApp.status.textContent = "";
+  if (fileConverterApp.preview) fileConverterApp.preview.innerHTML = "";
 });
 fileConverterApp.format.addEventListener("change", () => {
   fileConverterApp.downloadLink.style.display = "none";
   fileConverterApp.status.textContent = "";
+  if (fileConverterApp.preview) fileConverterApp.preview.innerHTML = "";
 });
 
 // Date and time
