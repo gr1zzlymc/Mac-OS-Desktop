@@ -1363,6 +1363,18 @@ li > .menu__container > .grid__controling .control_center--grid {
   color: #4aa3ff;
 }
 
+.file-converter__content .dimension-inputs {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.file-converter__content .status-message {
+  font-size: 0.875rem;
+  color: var(--color-white-800);
+  text-align: center;
+}
+
 /* Add to Home Screen button */
 .install-btn {
   position: fixed;
