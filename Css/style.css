@@ -1421,6 +1421,54 @@ li > .menu__container > .grid__controling .control_center--grid {
   margin-bottom: 0.25rem;
 }
 
+.instagram {
+  display: none;
+  width: 22rem;
+  max-width: 90%;
+  height: 18rem;
+  background: var(--color-black-500);
+  backdrop-filter: blur(1rem);
+  border-radius: 1rem;
+  box-shadow: 0 0.5rem 2rem var(--color-black-500);
+  border: 1px solid var(--color-white-200);
+  padding: 1rem;
+  color: var(--color-white);
+}
+
+.instagram__content {
+  height: calc(100% - 2rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.instagram__content input,
+.instagram__content button {
+  width: 100%;
+  padding: 0.4rem;
+  border-radius: 0.25rem;
+  border: 1px solid var(--color-white-200);
+  background-color: var(--color-black-600);
+  color: var(--color-white);
+}
+
+.instagram__content button {
+  background-color: var(--color-blue-800);
+  border: none;
+  cursor: pointer;
+}
+
+.instagram__content button:hover {
+  background-color: #026be5;
+}
+
+.instagram__content .preview img {
+  max-width: 100%;
+  margin-bottom: 0.5rem;
+}
+
 /* Add to Home Screen button */
 .install-btn {
   position: fixed;

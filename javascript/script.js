@@ -105,6 +105,22 @@ const fileConverterApp = {
   library: document.querySelector(".file-converter .conversion-library"),
 };
 
+// Instagram Downloader App
+const instagramApp = {
+  app_name: document.querySelector("#instagram"),
+  window: document.querySelector(".instagram"),
+  full: document.querySelector(".full-instagram"),
+  close: document.querySelector(".close-instagram"),
+  backfull: document.querySelector(".backfull-instagram"),
+  point: document.querySelector("#point-instagram"),
+  opening: document.querySelector(".open-instagram"),
+  opening_l: document.querySelector(".open-instagram-launching"),
+  input: document.querySelector(".instagram .insta-url"),
+  fetchBtn: document.querySelector(".instagram .insta-fetch"),
+  preview: document.querySelector(".instagram .preview"),
+  status: document.querySelector(".instagram .status-message"),
+};
+
 // Ensure convert button exists if HTML was missing it
 if (!fileConverterApp.convertBtn && fileConverterApp.window) {
   const content = fileConverterApp.window.querySelector(
@@ -135,6 +151,7 @@ const APP_MAP = {
   calculator: { app: "calculator", point: "point-cal" },
   maps: { app: "map", point: "point-maps" },
   "file-converter": { app: "fileConverter", point: "point-file-converter" },
+  instagram: { app: "instagram", point: "point-instagram" },
 };
 
 function blobToDataURL(blob) {
@@ -354,6 +371,16 @@ function handleOpenFileConverter_launchpad() {
   launchpad.point.style.display = "none";
 }
 
+function handleOpenInstagram_launchpad() {
+  instagramApp.window.style.display = "block";
+  instagramApp.app_name.style.display = "block";
+  launchpad.container.style.display = "flex";
+  elements.navbar.style.display = "flex";
+  launchpad.window.style.display = "none";
+  instagramApp.point.style.display = "block";
+  launchpad.point.style.display = "none";
+}
+
 // Calculator app start
 function handleOpenCal_launchpad() {
   calculatorApp.window.style.display = "block";
@@ -387,6 +414,9 @@ mapsApp.close.addEventListener("click", () =>
 fileConverterApp.close.addEventListener("click", () =>
   close_window(fileConverterApp.window, fileConverterApp.point, fileConverterApp.app_name)
 );
+instagramApp.close.addEventListener("click", () =>
+  close_window(instagramApp.window, instagramApp.point, instagramApp.app_name)
+);
 notesApp.deleting.addEventListener("click", handleDeleting);
 terminalApp.full.addEventListener("click", () =>
   handleFullScreen(terminalApp.window)
@@ -403,6 +433,9 @@ mapsApp.full.addEventListener("click", () => handleFullScreen(mapsApp.window));
 fileConverterApp.full.addEventListener("click", () =>
   handleFullScreen(fileConverterApp.window)
 );
+instagramApp.full.addEventListener("click", () =>
+  handleFullScreen(instagramApp.window)
+);
 notesApp.window.addEventListener("click", handleNotes);
 terminalApp.opening.addEventListener("click", () =>
   open_window(terminalApp.window, terminalApp.point, terminalApp.app_name)
@@ -416,6 +449,9 @@ calculatorApp.opening.addEventListener("click", () =>
 fileConverterApp.opening.addEventListener("click", () =>
   open_window(fileConverterApp.window, fileConverterApp.point, fileConverterApp.app_name)
 );
+instagramApp.opening.addEventListener("click", () =>
+  open_window(instagramApp.window, instagramApp.point, instagramApp.app_name)
+);
 /*
 vscodeApp.opening.addEventListener("click", () =>
   open_window(vscodeApp.window, vscodeApp.point, vscodeApp.app_name)
@@ -428,6 +464,7 @@ fileConverterApp.opening_l.addEventListener(
   "click",
   handleOpenFileConverter_launchpad
 );
+instagramApp.opening_l.addEventListener("click", handleOpenInstagram_launchpad);
 /*
 vscodeApp.close.addEventListener("click", () =>
   close_window(vscodeApp.window, vscodeApp.point, vscodeApp.app_name)
@@ -441,6 +478,9 @@ mapsApp.backfull.addEventListener("click", () =>
 );
 fileConverterApp.backfull.addEventListener("click", () =>
   handleMinimize(fileConverterApp.window)
+);
+instagramApp.backfull.addEventListener("click", () =>
+  handleMinimize(instagramApp.window)
 );
 calculatorApp.close.addEventListener("click", () =>
   close_window(
@@ -524,9 +564,10 @@ $(function () {
   $(".note").draggable();
   $(".calculator").draggable();
 $(".Vscode").draggable();
-$(".spotlight_search").draggable();
-$(".maps").draggable();
-$(".file-converter").draggable();
+  $(".spotlight_search").draggable();
+  $(".maps").draggable();
+  $(".file-converter").draggable();
+  $(".instagram").draggable();
 });
 
 // ----------------- File converter functionality -----------------
@@ -697,6 +738,45 @@ fileConverterApp.format.addEventListener("change", () => {
   fileConverterApp.status.textContent = "";
   if (fileConverterApp.preview) fileConverterApp.preview.innerHTML = "";
 });
+
+// ----------------- Instagram downloader functionality -----------------
+async function fetchInstagramImages(url) {
+  try {
+    const res = await fetch(`https://r.jina.ai/${url}`);
+    const text = await res.text();
+    const matches = [...text.matchAll(/"display_url":"(.*?)"/g)];
+    return matches.map((m) => m[1].replace(/\\u0026/g, "&"));
+  } catch (e) {
+    console.error(e);
+    return [];
+  }
+}
+
+function handleFetchInstagram() {
+  const url = instagramApp.input.value.trim();
+  if (!url) return;
+  instagramApp.status.textContent = "Loading...";
+  fetchInstagramImages(url).then((imgs) => {
+    instagramApp.preview.innerHTML = "";
+    instagramApp.status.textContent = "";
+    if (!imgs.length) {
+      instagramApp.status.textContent = "No images found";
+      return;
+    }
+    imgs.forEach((src, i) => {
+      const img = document.createElement("img");
+      img.src = src;
+      instagramApp.preview.appendChild(img);
+      const a = document.createElement("a");
+      a.href = src;
+      a.download = `instagram_${i + 1}.jpg`;
+      a.textContent = `Download ${i + 1}`;
+      instagramApp.preview.appendChild(a);
+    });
+  });
+}
+
+instagramApp.fetchBtn?.addEventListener("click", handleFetchInstagram);
 
 // Date and time
 const dateElement = document.getElementById("date");
