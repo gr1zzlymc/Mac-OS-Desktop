@@ -127,6 +127,60 @@ const launchpad = {
   opening: document.querySelector(".open-launchpad"),
 };
 
+const APP_MAP = {
+  terminal: { app: "Terminal", point: "point-terminal" },
+  note: { app: "Notes", point: "point-note" },
+  calculator: { app: "calculator", point: "point-cal" },
+  maps: { app: "map", point: "point-maps" },
+  "file-converter": { app: "fileConverter", point: "point-file-converter" },
+};
+
+function getAppKey(el) {
+  return Array.from(el.classList).find((c) => c !== "window");
+}
+
+function saveState() {
+  const openApps = [];
+  document.querySelectorAll(".window, .calculator").forEach((win) => {
+    if (win.style.display !== "none") {
+      const key = getAppKey(win);
+      if (key) openApps.push(key);
+    }
+  });
+  localStorage.setItem("openApps", JSON.stringify(openApps));
+  if (notesApp.content_typing)
+    localStorage.setItem("notesContent", notesApp.content_typing.value);
+  if (elements.brightness_range)
+    localStorage.setItem("brightness", elements.brightness_range.value);
+  if (elements.sound_range)
+    localStorage.setItem("sound", elements.sound_range.value);
+}
+
+function restoreAppState() {
+  const openApps = JSON.parse(localStorage.getItem("openApps") || "[]");
+  openApps.forEach((key) => {
+    const map = APP_MAP[key] || {};
+    const win = document.querySelector(`.${key}`);
+    const point = map.point ? document.getElementById(map.point) : null;
+    const appItem = map.app ? document.getElementById(map.app) : null;
+    if (win) win.style.display = "block";
+    if (point) point.style.display = "block";
+    if (appItem) appItem.style.display = "block";
+  });
+
+  const noteContent = localStorage.getItem("notesContent");
+  if (noteContent !== null && notesApp.content_typing)
+    notesApp.content_typing.value = noteContent;
+
+  const brightness = localStorage.getItem("brightness");
+  if (brightness !== null && elements.brightness_range)
+    elements.brightness_range.value = brightness;
+
+  const sound = localStorage.getItem("sound");
+  if (sound !== null && elements.sound_range)
+    elements.sound_range.value = sound;
+}
+
 /********** LISTENERS **********/
 
 /* 
@@ -184,6 +238,7 @@ function close_window(close, point, appName) {
   close.style.display = "none";
   point.style.display = "none";
   appName.style.display = "none";
+  saveState();
 }
 
 function open_window(open, point, appName) {
@@ -194,6 +249,7 @@ function open_window(open, point, appName) {
   launchpad.point.style.display = "none";
   appName.style.display = "block";
   point.style.display = "block";
+  saveState();
 }
 
 // Launchpad function start
@@ -723,6 +779,17 @@ elements.batteryButton.addEventListener("click", () => {
   elements.batteryButton.classList.toggle("selected");
 });
 /********** End Battery **********/
+
+// Restore state when page loads
+document.addEventListener("DOMContentLoaded", restoreAppState);
+
+// Save state on user interactions
+if (notesApp.content_typing)
+  notesApp.content_typing.addEventListener("input", saveState);
+if (elements.brightness_range)
+  elements.brightness_range.addEventListener("input", saveState);
+if (elements.sound_range)
+  elements.sound_range.addEventListener("input", saveState);
 
 // Call the functions
 calculateBattery();
