@@ -1330,18 +1330,35 @@ li > .menu__container > .grid__controling .control_center--grid {
   font-weight: bold;
 }
 
-.fileconverter {
+.file-converter {
   display: none;
-  width: 30rem;
+  width: 22rem;
   max-width: 90%;
-  height: 20rem;
-  max-height: 80%;
-  background: var(--app-color-white);
+  height: 18rem;
+  background: var(--color-black-500);
   backdrop-filter: blur(1rem);
   border-radius: 1rem;
   box-shadow: 0 0.5rem 2rem var(--color-black-500);
   border: 1px solid var(--color-white-200);
-  animation: zoom-out 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
   padding: 1rem;
 }
 
+.file-converter__content {
+  height: calc(100% - 2rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.file-converter__content input,
+.file-converter__content select,
+.file-converter__content button {
+  width: 100%;
+}
+
+.file-converter__content a {
+  margin-top: 0.5rem;
+  color: #4aa3ff;
+}
