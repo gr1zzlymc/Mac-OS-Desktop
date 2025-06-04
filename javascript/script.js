@@ -83,6 +83,17 @@ const mapsApp = {
   opening: document.querySelector(".open-map"),
 };
 
+const fileConverterApp = {
+  app_name: document.querySelector("#fileconverter"),
+  window: document.querySelector(".fileconverter"),
+  full: document.querySelector(".full-fileconverter"),
+  close: document.querySelector(".close-fileconverter"),
+  backfull: document.querySelector(".backfull-fileconverter"),
+  point: document.querySelector("#point-fileconverter"),
+  opening: document.querySelector(".open-fileconverter"),
+  opening_l: document.querySelector(".open-fileconverter-launching"),
+};
+
 // Launchpad
 const launchpad = {
   container: document.querySelector(".container__Window"),
@@ -202,6 +213,16 @@ function handleOpenCal_launchpad() {
 }
 // Calculator app end
 
+function handleOpenConverter_launchpad() {
+  fileConverterApp.window.style.display = "block";
+  fileConverterApp.app_name.style.display = "block";
+  launchpad.container.style.display = "flex";
+  elements.navbar.style.display = "flex";
+  launchpad.window.style.display = "none";
+  fileConverterApp.point.style.display = "block";
+  launchpad.point.style.display = "none";
+}
+// Converter app end
 handleopen_spotlight();
 handleOpenLaunching();
 notesApp.adding.addEventListener("click", handleAdding);
@@ -243,6 +264,9 @@ notesApp.opening.addEventListener("click", () =>
 calculatorApp.opening.addEventListener("click", () =>
   open_window(calculatorApp.window, calculatorApp.point, calculatorApp.app_name)
 );
+fileConverterApp.opening.addEventListener("click", () =>
+  open_window(fileConverterApp.window, fileConverterApp.point, fileConverterApp.app_name)
+);
 /*
 vscodeApp.opening.addEventListener("click", () =>
   open_window(vscodeApp.window, vscodeApp.point, vscodeApp.app_name)
@@ -269,6 +293,20 @@ calculatorApp.close.addEventListener("click", () =>
     calculatorApp.app_name
   )
 );
+fileConverterApp.close.addEventListener("click", () =>
+  close_window(
+    fileConverterApp.window,
+    fileConverterApp.point,
+    fileConverterApp.app_name
+  )
+);
+fileConverterApp.backfull.addEventListener("click", () =>
+  handleMinimize(fileConverterApp.window)
+);
+fileConverterApp.full.addEventListener("click", () =>
+  handleFullScreen(fileConverterApp.window)
+);
+fileConverterApp.opening_l.addEventListener("click", handleOpenConverter_launchpad);
 calculatorApp.opening_l.addEventListener("click", handleOpenCal_launchpad);
 elements.open_spotlight.addEventListener("click", handleopen_spotlight);
 launchpad.searchbox.addEventListener("input", handleLaunchpadSearch);
@@ -346,6 +384,7 @@ $(function () {
   $(".Vscode").draggable();
   $(".spotlight_search").draggable();
   $(".maps").draggable();
+  $(".fileconverter").draggable();
 });
 
 // Date and time

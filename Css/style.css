@@ -1329,3 +1329,19 @@ li > .menu__container > .grid__controling .control_center--grid {
 .widgets-panel__calendar li span:first-child {
   font-weight: bold;
 }
+
+.fileconverter {
+  display: none;
+  width: 30rem;
+  max-width: 90%;
+  height: 20rem;
+  max-height: 80%;
+  background: var(--app-color-white);
+  backdrop-filter: blur(1rem);
+  border-radius: 1rem;
+  box-shadow: 0 0.5rem 2rem var(--color-black-500);
+  border: 1px solid var(--color-white-200);
+  animation: zoom-out 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
+  padding: 1rem;
+}
+

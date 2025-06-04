@@ -102,6 +102,9 @@
         <li class="leftLi app_name" id="map">
           <p>Maps</p>
         </li>
+        <li class="leftLi app_name" id="fileconverter">
+          <p>File Converter</p>
+        </li>
         <li class="leftLi">
           File
           <ul>
@@ -383,6 +386,10 @@
         <img src="./icon/dock/calculator.png" alt="Calculator Logo" />
         <hr class="point" id="point-cal" />
       </button>
+        <button class="icon open-fileconverter">
+          <img src="./icon/dock/appstore.png" alt="File Converter Logo" />
+          <hr class="point hidden" id="point-fileconverter" />
+        </button>
       <button class="icon open-note">
         <img src="./icon/dock/notes.png" alt="Notes Logo" />
         <hr class="point hidden" id="point-note" />
@@ -442,6 +449,10 @@
           <img src="./icon/Launchpad/calculator.png" alt="" />
           <strong>Calculator</strong>
         </div>
+          <div class="child-launchpad open-fileconverter-launching" data-keywords="Converter,File">
+            <img src="./icon/Launchpad/appstore.png" alt="" />
+            <strong>Converter</strong>
+          </div>
         <div class="child-launchpad" data-keywords="Calendar">
           <img src="./icon/Launchpad/calendar.png" alt="" />
           <strong>Calendar</strong>
@@ -658,6 +669,21 @@
           <button value="0" class="button number large">0</button>
           <button value="." class="button number">.</button>
           <button value="=" class="button operator r-radius">=</button>
+        </div>
+      </div>
+      <div class="window fileconverter">
+        <div class="window__taskbar">
+          <div class="window__taskbar--actions">
+            <button class="close-fileconverter"></button>
+            <button class="backfull-fileconverter"></button>
+            <button class="full-fileconverter"></button>
+          </div>
+          <div class="window__taskbar--content">
+            <h2>File Converter</h2>
+          </div>
+        </div>
+        <div class="content">
+          <p>Convert your files here!</p>
         </div>
       </div>
     </div>
