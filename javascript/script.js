@@ -101,6 +101,8 @@ const fileConverterApp = {
   convertBtn: document.querySelector(".file-converter .convert-btn"),
   downloadLink: document.querySelector(".file-converter .download-link"),
   status: document.querySelector(".file-converter .status-message"),
+  preview: document.querySelector(".file-converter .preview"),
+  library: document.querySelector(".file-converter .conversion-library"),
 };
 
 // Ensure convert button exists if HTML was missing it
@@ -134,6 +136,60 @@ const APP_MAP = {
   maps: { app: "map", point: "point-maps" },
   "file-converter": { app: "fileConverter", point: "point-file-converter" },
 };
+
+let conversionLibrary = [];
+
+function loadConversionLibrary() {
+  const stored = JSON.parse(localStorage.getItem("conversionLibrary") || "[]");
+  conversionLibrary = stored;
+  if (fileConverterApp.library) {
+    fileConverterApp.library.innerHTML = "";
+    stored.forEach((item) => addItemToLibraryElement(item));
+  }
+}
+
+function saveConversionLibrary() {
+  localStorage.setItem("conversionLibrary", JSON.stringify(conversionLibrary));
+}
+
+function addItemToLibraryElement(item) {
+  const li = document.createElement("li");
+  const a = document.createElement("a");
+  a.href = item.url;
+  a.download = item.name;
+  a.textContent = item.name;
+  li.appendChild(a);
+  fileConverterApp.library.appendChild(li);
+}
+
+function addToLibrary(url, name) {
+  const item = { url, name };
+  conversionLibrary.push(item);
+  saveConversionLibrary();
+  if (fileConverterApp.library) addItemToLibraryElement(item);
+}
+
+function showPreview(url, type) {
+  if (!fileConverterApp.preview) return;
+  fileConverterApp.preview.innerHTML = "";
+  if (type.startsWith("image/")) {
+    const img = document.createElement("img");
+    img.src = url;
+    fileConverterApp.preview.appendChild(img);
+  } else if (type === "application/pdf") {
+    const iframe = document.createElement("iframe");
+    iframe.src = url;
+    fileConverterApp.preview.appendChild(iframe);
+  } else if (type === "text/plain") {
+    fetch(url)
+      .then((r) => r.text())
+      .then((text) => {
+        const pre = document.createElement("pre");
+        pre.textContent = text.slice(0, 1000);
+        fileConverterApp.preview.appendChild(pre);
+      });
+  }
+}
 
 function getAppKey(el) {
   return Array.from(el.classList).find((c) => c !== "window");
@@ -503,6 +559,8 @@ function handleFileConversion() {
             "Download " + format.toUpperCase();
           fileConverterApp.downloadLink.style.display = "inline-block";
           fileConverterApp.status.textContent = "Conversion complete!";
+          showPreview(url, mime);
+          addToLibrary(url, fileConverterApp.downloadLink.download);
         }, mime);
       };
       img.src = e.target.result;
@@ -525,6 +583,8 @@ function handleFileConversion() {
         fileConverterApp.downloadLink.textContent = "Download PDF";
         fileConverterApp.downloadLink.style.display = "inline-block";
         fileConverterApp.status.textContent = "Conversion complete!";
+        showPreview(url, "application/pdf");
+        addToLibrary(url, fileConverterApp.downloadLink.download);
       } else if (format === "txt") {
         const blob = new Blob([text], { type: "text/plain" });
         const url = URL.createObjectURL(blob);
@@ -534,6 +594,8 @@ function handleFileConversion() {
         fileConverterApp.downloadLink.textContent = "Download TXT";
         fileConverterApp.downloadLink.style.display = "inline-block";
         fileConverterApp.status.textContent = "Conversion complete!";
+        showPreview(url, "text/plain");
+        addToLibrary(url, fileConverterApp.downloadLink.download);
       } else {
         fileConverterApp.status.textContent = "Unsupported conversion";
       }
@@ -569,6 +631,8 @@ function handleFileConversion() {
               fileConverterApp.downloadLink.textContent = "Download TXT";
               fileConverterApp.downloadLink.style.display = "inline-block";
               fileConverterApp.status.textContent = "Conversion complete!";
+              showPreview(url, "text/plain");
+              addToLibrary(url, fileConverterApp.downloadLink.download);
             });
           })
           .catch(() => {
@@ -781,7 +845,10 @@ elements.batteryButton.addEventListener("click", () => {
 /********** End Battery **********/
 
 // Restore state when page loads
-document.addEventListener("DOMContentLoaded", restoreAppState);
+document.addEventListener("DOMContentLoaded", () => {
+  restoreAppState();
+  loadConversionLibrary();
+});
 
 // Save state on user interactions
 if (notesApp.content_typing)
