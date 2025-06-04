@@ -105,6 +105,9 @@
         <li class="leftLi app_name" id="fileConverter">
           <p>File Converter</p>
         </li>
+        <li class="leftLi app_name" id="instagram">
+          <p>Instagram DL</p>
+        </li>
         <li class="leftLi">
           File
           <ul>
@@ -402,6 +405,10 @@
         <img src="./icon/dock/appstore.png" alt="File Converter" />
         <hr class="point hidden" id="point-file-converter" />
       </button>
+      <button class="icon open-instagram">
+        <img src="./icon/dock/instagram.svg" alt="Instagram" />
+        <hr class="point hidden" id="point-instagram" />
+      </button>
       <button class="icon">
         <img
           src="./icon/dock/preferences.png"
@@ -514,6 +521,10 @@
         <div class="child-launchpad open-fileconverter-launching" data-keywords="File Converter">
           <img src="./icon/Launchpad/appstore.png" alt="" />
           <strong>File Converter</strong>
+        </div>
+        <div class="child-launchpad open-instagram-launching" data-keywords="Instagram">
+          <img src="./icon/Launchpad/instagram.svg" alt="" />
+          <strong>Instagram DL</strong>
         </div>
       </div>
     </div>
@@ -710,6 +721,25 @@
           <p class="status-message"></p>
           <div class="preview"></div>
           <ul class="conversion-library"></ul>
+        </div>
+      </div>
+
+      <div class="window instagram">
+        <div class="window__taskbar">
+          <div class="window__taskbar--actions">
+            <button class="close-instagram"></button>
+            <button class="backfull-instagram"></button>
+            <button class="full-instagram"></button>
+          </div>
+          <div class="window__taskbar--content">
+            <h2>Instagram DL</h2>
+          </div>
+        </div>
+        <div class="content instagram__content">
+          <input type="text" class="insta-url" placeholder="Instagram post URL" />
+          <button class="insta-fetch">Fetch</button>
+          <p class="status-message"></p>
+          <div class="preview"></div>
         </div>
       </div>
     </div>
