@@ -848,7 +848,7 @@ li > .menu__container > .grid__controling .control_center--grid {
   color: white;
 }
 
-.spotlight_serach {
+.spotlight_search {
   width: 400px;
   height: 50px;
   display: flex;
@@ -865,10 +865,10 @@ li > .menu__container > .grid__controling .control_center--grid {
   z-index: 10;
   box-shadow: 0 10px 10px rgba(37, 37, 37, 0.137);
 }
-.spotlight_serach svg {
+.spotlight_search svg {
   margin-left: 10px;
 }
-.spotlight_serach input {
+.spotlight_search input {
   width: 90%;
   font-size: 20px;
   font-weight: 100;
@@ -876,7 +876,7 @@ li > .menu__container > .grid__controling .control_center--grid {
   margin-left: 10px;
   padding-right: 10px;
 }
-.spotlight_serach input::placeholder {
+.spotlight_search input::placeholder {
   color: white;
 }
 
