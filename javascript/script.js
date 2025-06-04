@@ -103,6 +103,20 @@ const fileConverterApp = {
   status: document.querySelector(".file-converter .status-message"),
 };
 
+// Ensure convert button exists if HTML was missing it
+if (!fileConverterApp.convertBtn && fileConverterApp.window) {
+  const content = fileConverterApp.window.querySelector(
+    ".file-converter__content"
+  );
+  if (content) {
+    fileConverterApp.convertBtn = document.createElement("button");
+    fileConverterApp.convertBtn.className = "convert-btn";
+    fileConverterApp.convertBtn.textContent = "Convert";
+    content.appendChild(fileConverterApp.convertBtn);
+    fileConverterApp.convertBtn.addEventListener("click", handleFileConversion);
+  }
+}
+
 // Launchpad
 const launchpad = {
   container: document.querySelector(".container__Window"),
@@ -514,7 +528,9 @@ function handleFileConversion() {
   }
 }
 
-fileConverterApp.convertBtn.addEventListener("click", handleFileConversion);
+if (fileConverterApp.convertBtn) {
+  fileConverterApp.convertBtn.addEventListener("click", handleFileConversion);
+}
 
 fileConverterApp.input.addEventListener("change", () => {
   fileConverterApp.downloadLink.style.display = "none";
