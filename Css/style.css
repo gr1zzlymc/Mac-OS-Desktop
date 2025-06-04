@@ -1341,6 +1341,7 @@ li > .menu__container > .grid__controling .control_center--grid {
   box-shadow: 0 0.5rem 2rem var(--color-black-500);
   border: 1px solid var(--color-white-200);
   padding: 1rem;
+  color: var(--color-white);
 }
 
 .file-converter__content {
@@ -1356,11 +1357,31 @@ li > .menu__container > .grid__controling .control_center--grid {
 .file-converter__content select,
 .file-converter__content button {
   width: 100%;
+  padding: 0.4rem;
+  border-radius: 0.25rem;
+  border: 1px solid var(--color-white-200);
+  background-color: var(--color-black-600);
+  color: var(--color-white);
+}
+
+.file-converter__content .convert-btn {
+  background-color: var(--color-blue-800);
+  border: none;
+  cursor: pointer;
+}
+
+.file-converter__content .convert-btn:hover {
+  background-color: #026be5;
 }
 
 .file-converter__content a {
   margin-top: 0.5rem;
   color: #4aa3ff;
+  text-decoration: none;
+}
+
+.file-converter__content a:hover {
+  text-decoration: underline;
 }
 
 .file-converter__content .dimension-inputs {

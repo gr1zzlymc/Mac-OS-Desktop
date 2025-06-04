@@ -389,16 +389,19 @@ $(function () {
   $(".terminal").draggable();
   $(".note").draggable();
   $(".calculator").draggable();
-  $(".Vscode").draggable();
-  $(".spotlight_search").draggable();
-  $(".maps").draggable();
-  $(".file-converter").draggable();
+$(".Vscode").draggable();
+$(".spotlight_search").draggable();
+$(".maps").draggable();
+$(".file-converter").draggable();
 });
 
-// File converter functionality
-fileConverterApp.convertBtn.addEventListener("click", () => {
+// ----------------- File converter functionality -----------------
+function handleFileConversion() {
   const file = fileConverterApp.input.files[0];
-  if (!file) return;
+  if (!file) {
+    fileConverterApp.status.textContent = "Select a file first.";
+    return;
+  }
   fileConverterApp.status.textContent = "Converting...";
   const format = fileConverterApp.format.value;
   const fileType = file.type;
@@ -509,7 +512,9 @@ fileConverterApp.convertBtn.addEventListener("click", () => {
   } else {
     fileConverterApp.status.textContent = "Unsupported file type";
   }
-});
+}
+
+fileConverterApp.convertBtn.addEventListener("click", handleFileConversion);
 
 fileConverterApp.input.addEventListener("change", () => {
   fileConverterApp.downloadLink.style.display = "none";
