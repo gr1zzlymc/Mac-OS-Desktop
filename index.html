@@ -102,6 +102,9 @@
         <li class="leftLi app_name" id="map">
           <p>Maps</p>
         </li>
+        <li class="leftLi app_name" id="fileConverter">
+          <p>File Converter</p>
+        </li>
         <li class="leftLi">
           File
           <ul>
@@ -395,6 +398,10 @@
         />
         <hr class="point" id="point-terminal" />
       </button>
+      <button class="icon open-file-converter">
+        <img src="./icon/dock/appstore.png" alt="File Converter" />
+        <hr class="point hidden" id="point-file-converter" />
+      </button>
       <button class="icon">
         <img
           src="./icon/dock/preferences.png"
@@ -503,6 +510,10 @@
         <div class="child-launchpad" data-keywords="zoom,video,call">
           <img src="./icon/Launchpad/zoom.png" alt="" />
           <strong>Zoom</strong>
+        </div>
+        <div class="child-launchpad open-fileconverter-launching" data-keywords="File Converter">
+          <img src="./icon/Launchpad/appstore.png" alt="" />
+          <strong>File Converter</strong>
         </div>
       </div>
     </div>
@@ -658,6 +669,27 @@
           <button value="0" class="button number large">0</button>
           <button value="." class="button number">.</button>
           <button value="=" class="button operator r-radius">=</button>
+        </div>
+      </div>
+      <div class="window file-converter">
+        <div class="window__taskbar">
+          <div class="window__taskbar--actions">
+            <button class="close-file-converter"></button>
+            <button class="backfull-file-converter"></button>
+            <button class="full-file-converter"></button>
+          </div>
+          <div class="window__taskbar--content">
+            <h2>File Converter</h2>
+          </div>
+        </div>
+        <div class="content file-converter__content">
+          <input type="file" class="file-input" accept="image/*" />
+          <select class="format-select">
+            <option value="png">PNG</option>
+            <option value="jpeg">JPEG</option>
+          </select>
+          <button class="convert-btn">Convert</button>
+          <a href="#" class="download-link" style="display:none">Download</a>
         </div>
       </div>
     </div>
