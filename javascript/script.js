@@ -3,7 +3,7 @@ const elements = {
   body: document.querySelector("body"),
   navbar: document.querySelector(".navbar"),
   open_spotlight: document.querySelector(".open_Search"),
-  spotlight_search: document.querySelector(".spotlight_serach"),
+  spotlight_search: document.querySelector(".spotlight_search"),
   brightness_range: document.getElementById("brightness"),
   sound_range: document.getElementById("sound"),
   clockElement: document.getElementById("clock"),
@@ -27,7 +27,7 @@ const calculatorApp = {
   backfull: document.querySelector(".min-cal"),
   point: document.querySelector("#point-cal"),
   opening: document.querySelector(".open-cal"),
-  opening_l: document.querySelector(".open-cal-lunching"),
+  opening_l: document.querySelector(".open-cal-launching"),
 };
 
 // Notes App
@@ -90,7 +90,7 @@ const launchpad = {
   searchbox: document.querySelector(".launchpad .searchbox"),
   app_container: document.querySelector(".Apps-container"),
   point: document.querySelector("#point-launchpad"),
-  opening: document.querySelector(".open-lunchpad"),
+  opening: document.querySelector(".open-launchpad"),
 };
 
 /********** LISTENERS **********/
@@ -191,7 +191,7 @@ function handleLaunchpadSearch(e) {
 // Launchpad function end
 
 // Calculator app start
-function handleOpenCal_lunchpad() {
+function handleOpenCal_launchpad() {
   calculatorApp.window.style.display = "block";
   calculatorApp.app_name.style.display = "block";
   launchpad.container.style.display = "flex";
@@ -206,7 +206,7 @@ handleopen_spotlight();
 handleOpenLaunching();
 notesApp.adding.addEventListener("click", handleAdding);
 calculatorApp.backfull.addEventListener("click", () =>
-  handleMinimize(terminalApp.window)
+  handleMinimize(calculatorApp.window)
 );
 notesApp.backfull.addEventListener("click", () =>
   handleMinimize(notesApp.window)
@@ -269,7 +269,7 @@ calculatorApp.close.addEventListener("click", () =>
     calculatorApp.app_name
   )
 );
-calculatorApp.opening_l.addEventListener("click", handleOpenCal_lunchpad);
+calculatorApp.opening_l.addEventListener("click", handleOpenCal_launchpad);
 elements.open_spotlight.addEventListener("click", handleopen_spotlight);
 launchpad.searchbox.addEventListener("input", handleLaunchpadSearch);
 elements.clockWrapper.addEventListener("click", () => {
@@ -344,7 +344,7 @@ $(function () {
   $(".note").draggable();
   $(".calculator").draggable();
   $(".Vscode").draggable();
-  $(".spotlight_serach").draggable();
+  $(".spotlight_search").draggable();
   $(".maps").draggable();
 });
 

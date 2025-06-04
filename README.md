@@ -106,7 +106,7 @@ An example of new icons those are added:
 ## list of Shorcuts : <br>
 > Alt + t = opening Terminal  <br>
 > Alt + o = opening Launchpad <br>
-> Alt + s = opening serach in  launchpad <br>
+> Alt + s = opening search in  launchpad <br>
 
 <!-- ACKNOWLEDGEMENTS -->
 
