@@ -96,6 +96,7 @@ const fileConverterApp = {
   input: document.querySelector(".file-converter .file-input"),
   widthInput: document.querySelector(".file-converter .width-input"),
   heightInput: document.querySelector(".file-converter .height-input"),
+  dimensionInputs: document.querySelector(".file-converter .dimension-inputs"),
   format: document.querySelector(".file-converter .format-select"),
   convertBtn: document.querySelector(".file-converter .convert-btn"),
   downloadLink: document.querySelector(".file-converter .download-link"),
@@ -400,42 +401,136 @@ fileConverterApp.convertBtn.addEventListener("click", () => {
   if (!file) return;
   fileConverterApp.status.textContent = "Converting...";
   const format = fileConverterApp.format.value;
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    const img = new Image();
-    img.onload = function () {
-      const canvas = document.createElement("canvas");
-      const w = parseInt(fileConverterApp.widthInput.value);
-      const h = parseInt(fileConverterApp.heightInput.value);
-      canvas.width = w || img.width;
-      canvas.height = h || img.height;
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      const mime =
-        format === "jpeg"
-          ? "image/jpeg"
-          : format === "webp"
-          ? "image/webp"
-          : "image/png";
-      canvas.toBlob(function (blob) {
+  const fileType = file.type;
+
+  if (fileType.startsWith("image/")) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const img = new Image();
+      img.onload = function () {
+        const canvas = document.createElement("canvas");
+        const w = parseInt(fileConverterApp.widthInput.value);
+        const h = parseInt(fileConverterApp.heightInput.value);
+        canvas.width = w || img.width;
+        canvas.height = h || img.height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const mime =
+          format === "jpeg"
+            ? "image/jpeg"
+            : format === "webp"
+            ? "image/webp"
+            : "image/png";
+        canvas.toBlob(function (blob) {
+          const url = URL.createObjectURL(blob);
+          fileConverterApp.downloadLink.href = url;
+          fileConverterApp.downloadLink.download =
+            file.name.replace(/\.[^.]+$/, "") + "." + format;
+          fileConverterApp.downloadLink.textContent =
+            "Download " + format.toUpperCase();
+          fileConverterApp.downloadLink.style.display = "inline-block";
+          fileConverterApp.status.textContent = "Conversion complete!";
+        }, mime);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  } else if (fileType === "text/plain") {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const text = e.target.result;
+      if (format === "pdf") {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const lines = doc.splitTextToSize(text, 180);
+        doc.text(lines, 10, 10);
+        const blob = doc.output("blob");
         const url = URL.createObjectURL(blob);
         fileConverterApp.downloadLink.href = url;
         fileConverterApp.downloadLink.download =
-          file.name.replace(/\.[^.]+$/, "") + "." + format;
-        fileConverterApp.downloadLink.textContent =
-          "Download " + format.toUpperCase();
+          file.name.replace(/\.[^.]+$/, "") + ".pdf";
+        fileConverterApp.downloadLink.textContent = "Download PDF";
         fileConverterApp.downloadLink.style.display = "inline-block";
         fileConverterApp.status.textContent = "Conversion complete!";
-      }, mime);
+      } else if (format === "txt") {
+        const blob = new Blob([text], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        fileConverterApp.downloadLink.href = url;
+        fileConverterApp.downloadLink.download =
+          file.name.replace(/\.[^.]+$/, "") + ".txt";
+        fileConverterApp.downloadLink.textContent = "Download TXT";
+        fileConverterApp.downloadLink.style.display = "inline-block";
+        fileConverterApp.status.textContent = "Conversion complete!";
+      } else {
+        fileConverterApp.status.textContent = "Unsupported conversion";
+      }
     };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
+    reader.readAsText(file);
+  } else if (fileType === "application/pdf") {
+    if (format === "txt") {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const typedarray = new Uint8Array(e.target.result);
+        pdfjsLib
+          .getDocument({ data: typedarray })
+          .promise.then((doc) => {
+            const pages = [];
+            const tasks = [];
+            for (let i = 1; i <= doc.numPages; i++) {
+              tasks.push(
+                doc.getPage(i).then((page) =>
+                  page.getTextContent().then((txt) => {
+                    const str = txt.items.map((s) => s.str).join(" ");
+                    pages.push(str);
+                  })
+                )
+              );
+            }
+            Promise.all(tasks).then(() => {
+              const text = pages.join("\n\n");
+              const blob = new Blob([text], { type: "text/plain" });
+              const url = URL.createObjectURL(blob);
+              fileConverterApp.downloadLink.href = url;
+              fileConverterApp.downloadLink.download =
+                file.name.replace(/\.[^.]+$/, "") + ".txt";
+              fileConverterApp.downloadLink.textContent = "Download TXT";
+              fileConverterApp.downloadLink.style.display = "inline-block";
+              fileConverterApp.status.textContent = "Conversion complete!";
+            });
+          })
+          .catch(() => {
+            fileConverterApp.status.textContent = "Error reading PDF";
+          });
+      };
+      reader.readAsArrayBuffer(file);
+    } else {
+      fileConverterApp.status.textContent = "Unsupported conversion";
+    }
+  } else {
+    fileConverterApp.status.textContent = "Unsupported file type";
+  }
 });
 
 fileConverterApp.input.addEventListener("change", () => {
   fileConverterApp.downloadLink.style.display = "none";
   fileConverterApp.status.textContent = "";
+  const file = fileConverterApp.input.files[0];
+  if (!file) return;
+  if (file.type.startsWith("image/")) {
+    fileConverterApp.dimensionInputs.style.display = "flex";
+    fileConverterApp.format.innerHTML =
+      '<option value="png">PNG</option><option value="jpeg">JPEG</option><option value="webp">WEBP</option>';
+  } else if (file.type === "text/plain") {
+    fileConverterApp.dimensionInputs.style.display = "none";
+    fileConverterApp.format.innerHTML =
+      '<option value="pdf">PDF</option><option value="txt">TXT</option>';
+  } else if (file.type === "application/pdf") {
+    fileConverterApp.dimensionInputs.style.display = "none";
+    fileConverterApp.format.innerHTML = '<option value="txt">TXT</option>';
+  } else {
+    fileConverterApp.dimensionInputs.style.display = "none";
+    fileConverterApp.format.innerHTML = '<option value="">N/A</option>';
+  }
 });
 fileConverterApp.widthInput.addEventListener("input", () => {
   fileConverterApp.downloadLink.style.display = "none";
