@@ -27,6 +27,15 @@ https://mhmdmhd6.github.io/Mac-OS-Desktop
 
 Visit the website using a modern browser. When prompted, tap **Install App** or use your browser's *Add to Home Screen* option to create a shortcut.
 
+## Local setup
+
+Install Python dependencies using:
+
+```bash
+python -m pip install -r webapp/requirements.txt
+```
+
+
 <hr> <br>
 
 ## New Available features in this recent versions are: 😀
